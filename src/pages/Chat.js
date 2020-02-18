@@ -1,30 +1,31 @@
-import React, {useEffect, useState} from "react";
-import socketApi from '../socketApi';
-
+import React, { useEffect, useState } from "react";
+import socketApi, { receiveMessageSubscriber } from "../socketApi";
+import ViewMessages from "./ViewMessages";
 
 const Chat = props => {
-    const [data, setData] = useState('Data');
-    const [text, setText] = useState('');
+  const [data, setData] = useState([]);
+  const [text, setText] = useState("");
 
-    const handleClick = () => {
-        socketApi.emit('user_data', text);
-        setData(text);
-        setText('');
+  const handleClick = () => {
+    socketApi.emit("create_message", {text});
+    setText("");
+  };
+
+  useEffect(() => {
+    console.log("useEffect");
+    receiveMessageSubscriber(setData);
+    return () => {
+      socketApi.emit('leave_room');
     };
+  }, []);
 
-    useEffect(() => {
-        console.log("useEffect");
-        socketApi.on('news', ({data}) => setData(data));
-    }, []);
-
-    return (
-        <div>
-            {data}
-            <input type="text" value={text} onChange={e => setText(e.target.value)}/>
-            <button onClick={handleClick}>Change</button>
-        </div>
-
-    );
+  return (
+    <div>
+      <ViewMessages messages={data} />
+      <input type="text" value={text} onChange={e => setText(e.target.value)} />
+      <button onClick={handleClick}>Change</button>
+    </div>
+  );
 };
 
 export default Chat;

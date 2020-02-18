@@ -1,10 +1,8 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 import Chat from "./pages/Chat";
 
-
 function App() {
-
   return (
     <div className="App">
       <Chat />
